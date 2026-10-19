@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: bikeseoul-data
+  task:
+    scheduling:
+      pool:
+        size: 2
+  http:
+    clients:
+      connect-timeout: 10s
+      read-timeout: 20s
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3307/ddareungi?serverTimezone=Asia/Seoul&characterEncoding=UTF-8}
+    username: ${MYSQL_USER:ddareungi}
+    password: ${MYSQL_PASSWORD:ddareungi}
+  flyway:
+    enabled: true
+
+seoul-bike:
+  api:
+    base-url: ${SEOUL_API_BASE_URL:http://openapi.seoul.go.kr:8088}
+    key: ${SEOUL_API_KEY:}
+    page-size: ${SEOUL_API_PAGE_SIZE:1000}
+    max-pages: ${SEOUL_API_MAX_PAGES:5}
+    realtime-service: bikeList
+    master-service: bikeStationMaster
+
+collector:
+  schedule:
+    cron: ${COLLECTOR_CRON:0 */5 * * * *}
+  master:
+    cron: ${MASTER_SYNC_CRON:0 20 3 * * *}
+  flow-import:
+    input-directory: ${FLOW_CSV_INPUT_DIR:./data/oa-21229}
+    charset: ${FLOW_CSV_CHARSET:MS949}
+    batch-size: ${FLOW_CSV_BATCH_SIZE:1000}
+  extended:
+    enabled: ${EXTENDED_COLLECTION_ENABLED:true}
+    download-enabled: ${OD_DOWNLOAD_ENABLED:true}
+    download-max-files: ${OD_DOWNLOAD_MAX_FILES:7}
+    download-lookback-days: ${OD_DOWNLOAD_LOOKBACK_DAYS:14}
+    max-download-bytes: 20000000
+    max-expanded-bytes: ${OD_MAX_EXPANDED_BYTES:2000000000}
+    usage-directory: ${USAGE_CSV_INPUT_DIR:./data/usage}
+    usage-kinds: ${USAGE_API_KINDS:station-month,day,hour}
+    usage-lag-days: ${USAGE_API_LAG_DAYS:5}
+    monthly-lookback: ${USAGE_MONTHLY_LOOKBACK:2}
+    backfill-tasks: ${USAGE_BACKFILL_TASKS:}
+    once: false
+    cron: ${EXTENDED_COLLECTION_CRON:0 10 4 * * *}
+
+logging:
+  level:
+    com.ddareungi.data: INFO
+
+server:
+  port: ${SERVER_PORT:8081}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
