@@ -1,0 +1,7 @@
+build
+.git
+.gradle
+.gradle-user-home
+.env
+data
+archive
